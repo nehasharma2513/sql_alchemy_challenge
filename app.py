@@ -13,7 +13,7 @@ from datetime import datetime
 # Database Setup
 #################################################
 # create engine to hawaii.sqlite
-engine = create_engine("sqlite:///Starter_Code/sql_alchemy_challenge/Resources/hawaii.sqlite")
+engine = create_engine("sqlite:///sql_alchemy_challenge/Resources/hawaii.sqlite")
 # reflect an existing database into a new model
 Base = automap_base()
 Base.prepare(autoload_with=engine)
@@ -92,9 +92,6 @@ def tobs():
    session = Session(engine)
    stations=session.query(Measurement.station, func.count(Measurement.station)).\
             group_by(Measurement.station).order_by(func.count(Measurement.station).desc()).all()
-   sel = [func.min(Measurement.tobs), 
-       func.max(Measurement.tobs), 
-       func.avg(Measurement.tobs)]
    most_active_station=stations[0]['station']
 # Using the most active station id
 # Query the last 12 months of temperature observation data for this station and plot the results as a histogram
@@ -130,8 +127,9 @@ def startDateOnly(start):
 
 @app.route("/api/v1.0/<start>/<end>")
 def startDateEndDate(start,end):
-    temp_results_between_dates = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
-    return jsonify(temp_results_between_dates)
+    temp_results_betweven_dates = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+    temp_results_start_end = list(np.ravel(temp_results_betweven_dates))
+    return jsonify(temp_results_start_end)
 
 if __name__ == '__main__':
     app.run(debug=True)
