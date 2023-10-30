@@ -13,7 +13,7 @@ from datetime import datetime
 # Database Setup
 #################################################
 # create engine to hawaii.sqlite
-engine = create_engine("sqlite:///Starter_Code/Resources/hawaii.sqlite")
+engine = create_engine("sqlite:///Starter_Code/sql_alchemy_challenge/Resources/hawaii.sqlite")
 # reflect an existing database into a new model
 Base = automap_base()
 Base.prepare(autoload_with=engine)
@@ -122,13 +122,15 @@ def tobs():
 
 
 @app.route("/api/v1.0/<start>")
-def startDateOnly(date):
-    temp_results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= date).all()
-    return jsonify(temp_results)
+def startDateOnly(start):
+    temp_results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).all()
+    # Convert list of tuples into normal list
+    temp_results_start = list(np.ravel(temp_results))
+    return jsonify(temp_results_start)
 
 @app.route("/api/v1.0/<start>/<end>")
-def startDateEndDate(start_date,end_date):
-    temp_results_between_dates = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+def startDateEndDate(start,end):
+    temp_results_between_dates = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
     return jsonify(temp_results_between_dates)
 
 if __name__ == '__main__':
